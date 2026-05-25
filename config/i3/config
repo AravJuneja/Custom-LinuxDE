@@ -3,12 +3,13 @@ set $mod Mod4
 font pango:monospace 8
 
 exec --no-startup-id dex --autostart --environment i3
+exec --no-startup-id picom -b
 exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
 exec --no-startup-id nm-applet
-exec --no-startup-id feh --bg-scale ~/Pictures/Wallpaper/wallpaper.png
+exec --no-startup-id feh --bg-scale ~/.config/wallpaper.png
 
-gaps inner 10
-gaps outer 10
+gaps inner 0
+gaps outer 0
 
 default_border pixel 0
 default_floating_border pixel 0
@@ -91,34 +92,55 @@ bindsym $mod+Shift+8 move container to workspace number $ws8
 bindsym $mod+Shift+9 move container to workspace number $ws9
 bindsym $mod+Shift+0 move container to workspace number $ws10
 
-bindsym $mod+b exec --no-startup-id ~/.config/i3/scripts/firefox-rofi.sh
-
 bindsym $mod+Shift+c reload
 bindsym $mod+Shift+r restart
 bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'Exit i3?' -B 'Yes' 'i3-msg exit'"
 
 mode "resize" {
-    bindsym j resize shrink width 10 px
-    bindsym k resize grow height 10 px
-    bindsym l resize shrink height 10 px
-    bindsym semicolon resize grow width 10 px
+    bindsym j resize shrink width 10 px or 10 ppt
+    bindsym k resize grow height 10 px or 10 ppt
+    bindsym l resize shrink height 10 px or 10 ppt
+    bindsym semicolon resize grow width 10 px or 10 ppt
+
+    bindsym Left resize shrink width 10 px or 10 ppt
+    bindsym Down resize grow height 10 px or 10 ppt
+    bindsym Up resize shrink height 10 px or 10 ppt
+    bindsym Right resize grow width 10 px or 10 ppt
+
     bindsym Return mode "default"
     bindsym Escape mode "default"
+    bindsym $mod+r mode "default"
 }
 
 bindsym $mod+r mode "resize"
 
-bindsym $mod+Shift+s exec --no-startup-id maim -s ~/Pictures/Screenshots/$(date +'%Y-%m-%d_%H-%M-%S').png
+bindsym $mod+Shift+s exec --no-startup-id maim -s | tee ~/Pictures/Screenshots/$(date +'%Y-%m-%d_%H-%M-%S').png | xclip -selection clipboard -t image/png
 
 bindsym $mod+m gaps inner all toggle 10; gaps outer all toggle 10
 
 bindsym XF86MonBrightnessUp exec --no-startup-id brightnessctl set +10%
 bindsym XF86MonBrightnessDown exec --no-startup-id brightnessctl set 10%-
 
+# Reading mode toggle (warm color temperature)
 bindsym $mod+Shift+b exec --no-startup-id ~/.config/i3/scripts/reading-mode.sh
 
 bindsym $mod+t exec --no-startup-id ~/.config/i3/scripts/ws-rename.sh
+bindsym $mod+Shift+t exec --no-startup-id ~/.config/i3/scripts/theme-picker.sh
 bindsym $mod+n exec --no-startup-id ~/.config/i3/scripts/ws-reset.sh
 bindsym $mod+Shift+n exec --no-startup-id ~/.config/i3/scripts/ws-reset-all.sh
 
+bindsym $mod+g exec --no-startup-id ~/.config/i3/scripts/toggle-monitor-grayscale.sh
+bindsym $mod+Shift+g exec --no-startup-id ~/.config/i3/scripts/toggle-grayscale-all.sh
+bindsym $mod+p exec --no-startup-id ~/.config/i3/scripts/toggle-display.sh
+
+
+
 exec_always --no-startup-id ~/.config/polybar/launch.sh
+
+bindsym $mod+Shift+w exec --no-startup-id ~/.local/bin/whip-claude
+bindsym $mod+Shift+h exec --no-startup-id terminator -e ~/.local/bin/hw
+
+# Firefox profile switcher (dynamic — regenerated at startup from profiles.ini)
+exec --no-startup-id ~/.config/i3/scripts/gen-firefox-mode.sh
+include ~/.config/i3/firefox-mode.conf
+bindsym $mod+b exec --no-startup-id ~/.config/i3/scripts/firefox-rofi.sh
